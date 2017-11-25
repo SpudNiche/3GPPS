@@ -66,6 +66,17 @@ void setup()
 void loop()
 {
     // Check for input
+    int check_enable = enableHandler();
+    int check_encode = encodeHandler();
+
+    // Process ENABLE Button Press
+    if (enable.previousLastRelease != enable.lastRelease) { // Button Pressed
+        // Process the timing and do some housekeeping
+        enable.pressLength = enable.lastRelease - enable.lastPress; // Determine press length
+        Serial.println("Enable Press took " + String(enable.pressLength) + " ms"); // Print
+        enable.previousLastRelease = enable.lastRelease; // Update
+
+        // Process timing (TODO: what do we do here?)
 
     // Process button presses
 
