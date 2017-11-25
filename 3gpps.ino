@@ -26,8 +26,8 @@ int enable_press = 0;           // Enable button presses
 int encode_press = 0;           // Encode button presses
 unsigned char winner;           // Hex value ID for winning player
 unsigned char loser;            // Hex value ID for losing player
-unsigned char packet[2];        // Array to send packet of data over 3G [Winner, Loser]
 int i;                          // Counting variable
+int state = 0;			// Tracks the state of transmission (0 = waiting, 1 = entering, 2 = transmitting)
 
 struct press_data {             // Timing data for button interupt routine
     unsigned int lastPress;
@@ -65,6 +65,27 @@ void setup()
 // While (1)
 void loop()
 {
+    // Update the LEDs based on the state
+    switch (state) {
+	case 0:
+		digitalWrite(RED_LED, HIGH);
+		digitalWrite(GREEN_LED, LOW);
+		break;
+	case 1:
+		digitalWrite(RED_LED, LOW);
+		digitalWrite(GREEN_LED, LOW);
+		break;
+	case 2:
+		digitalWrite(RED_LED, LOW);
+		digitalWrite(GREEN_LED, HIGH);
+		delay(2000);
+		digitalWrite(GREEN_LED, LOW);
+		state = 0;
+		break;
+	default:
+		break;
+    }
+
     // Check for input
     int check_enable = enableHandler();
     int check_encode = encodeHandler();
@@ -76,15 +97,77 @@ void loop()
         Serial.println("Enable Press took " + String(enable.pressLength) + " ms"); // Print
         enable.previousLastRelease = enable.lastRelease; // Update
 
-        // Process timing (TODO: what do we do here?)
+        /******************************* PROCESS TIMING *******************************/
+	// If the enable button was held for more than 3 seconds, restart the entire process
+	if (enable.pressLength > 3000) {
+		Serial.println("Submission reset");
 
-    // Process button presses
+		// Reset data values
+		winner = 0;
+		loser = 0;
 
-    // Update LEDs
+		// Reset button press values
+                enable_press = 0;
+                encode_press = 0;
 
-    // Send data
+		// Update the state of the transmission
+		state = 0;
+	}
+	else {
+		// Increment enable press count
+		enable_press++;
 
-    // Reset
+		// Process the enable press count (1, 2, or 3)
+		switch (enable_press) {
+			case 1:
+				Serial.println("Entering the winner ID...");
+				state = 1;
+				break;
+			case 2:
+				// Store the winner
+				winner = encode_press;
+				Serial.println("Winner ID: " + String(winner));
+				encode_press = 0;
+                    		num_LEDs(encode_press);
+				break;
+			case 3:
+				// Store the loser, then send the data
+				loser = encode_press;
+				Serial.println("Loser ID: " + String(loser));
+				encode_press = 0;
+				num_LEDs(encode_press);
+				
+				// Send the data!
+				Particle.publish("3GPPS-Electron", String(winner) + String(loser), PUBLIC);
+				state = 2;
+
+				 // Reset enable presses and winner/loser data
+                    		enable_press = 0;
+				break;
+			default:
+				break;
+		}
+	}
+    }
+
+    // Process ENCODE Button Press
+    if (encode.previousLastRelease != encode.lastRelease) { // Button pressed
+        // Process the button press and do some housekeeping
+        encode.pressLength = encode.lastRelease - encode.lastPress; 			    // Determine length of press
+        Serial.println("Encode Press took " + String(encode.pressLength) + " ms");  // Print how long the press lasted
+        encode.previousLastRelease = encode.lastRelease;                        	// Update the previousLastRelease value
+
+	// Update encode press data
+	if (encode_press == 15) {
+            encode_press = 0;
+        } else {
+            encode_press++;
+        }
+
+        // Update LEDs
+        num_LEDs(encode_press);
+    }
+
 }
 
 // Functions
