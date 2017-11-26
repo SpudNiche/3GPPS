@@ -2,6 +2,7 @@
 // ECE 435 - Final Project
 // November 25, 2017
 // Description: Particle Electron uses multiple buttons and LEDs to send ping-pong data over 3G to a Raspberry Pi
+// File: 3gpps.ino (Electron side)
 
 #include "Particle.h"
 
@@ -137,7 +138,7 @@ void loop()
                     num_LEDs(encode_press);
                     
                     // Send the data!
-                    Particle.publish("3GPPS-Electron", String(winner) + String(loser), PUBLIC);
+                    Particle.publish("3GPPS-Electron", String(winner) + ':' + String(loser), PUBLIC);
                     state = 2;
 
                      // Reset enable presses and winner/loser data
