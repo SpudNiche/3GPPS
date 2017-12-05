@@ -22,14 +22,22 @@ class DatabaseManager extends SQLite3 {
 	}
 
 	function updateBoard($winner_id, $loser_id) {
-		$sql = "UPDATE USERS SET win_count = win_count + 1 WHERE id = $winner_id;
-			UPDATE USERS SET loss_count = loss_count + 1 WHERE id = $loser_id"; 
-		return $this->exec($sql); 
+		$sql = "UPDATE USERS SET win_count = win_count + 1 WHERE id = :wid"; 
+		$stmt = $this->prepare($sql); 
+		$stmt->bindValue(":wid", $winner_id, SQLITE3_INTEGER); 
+		$stmt->execute(); 
+
+		$sql = "UPDATE USERS SET loss_count = loss_count + 1 WHERE id = :lid"; 
+		$stmt = $this->prepare($sql); 
+		$stmt->bindValue(":lid", $loser_id, SQLITE3_INTEGER); 
+		$stmt->execute(); 
 	}
 
 	function insertUser($name) {
-		$sql = "INSERT INTO USERS VALUES (null, '$name', 0, 0)"; 
-		return $this->exec($sql); 
+		$sql = "INSERT INTO USERS VALUES (null, :name, 0, 0)"; 
+		$stmt = $this->prepare($sql); 
+		$stmt->bindValue(":name", $name, SQLITE3_TEXT); 
+		$stmt->execute(); 
 	}
 
 	function updateUserName($id, $new_name) {
