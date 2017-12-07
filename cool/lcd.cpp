@@ -510,6 +510,16 @@ const byte c9[8] = {
     0b01111100,
     0b00000000
 }; 
+const byte asterisk[8] = {
+    0b00000000, 
+    0b01000010, 
+    0b00k11000, 
+    0b00111100, 
+    0b00111100, 
+    0b00011000, 
+    0b01000010, 
+    0b00000000, 
+};
 
 // Gets the column for a given character
 byte LCD::getCharCol(byte c, byte col){
@@ -612,6 +622,8 @@ byte LCD::getCharCol(byte c, byte col){
             return c8[col]; 
         case '9':
             return c9[col]; 
+        case '*':
+            return asterisk[col];
         break;
     }
     

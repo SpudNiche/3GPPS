@@ -96,7 +96,7 @@ void loop()
             digitalWrite(RED_LED, LOW);
             digitalWrite(GREEN_LED, HIGH);
 
-            updateRow(7, "Sending data ..."); 
+            updateRow(7, "Sending data ***");  
 
             // Send the data!
             Particle.publish("3GPPS-Electron", String(winner) + String(loser), PUBLIC);
@@ -178,6 +178,11 @@ void updateDisplay()
         updateChar(LCD_MARKING_X, LCD_WINNER_Y, ' '); 
         updateChar(LCD_MARKING_X, LCD_LOSER_Y, '*'); 
         break;
+    case PUBLISH:
+        updateChar(LCD_WINNER_X, LCD_WINNER_Y, current_id + '0'); 
+        updateChar(LCD_LOSER_X, LCD_LOSER_Y, current_id + '0'); 
+        updateChar(LCD_MARKING_X, LCD_WINNER_Y, '*'); 
+        updateChar(LCD_MARKING_X, LCD_LOSER_Y, ' '); 
     }
 }
 

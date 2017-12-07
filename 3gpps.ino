@@ -44,8 +44,8 @@ struct press_data encode = {0,0,0,0,0};
 
 // Function Prototypes
 void general_init();        // General initializations
-void enableHandler();       // Enable button handler
-void encodeHandler();       // Encode button handler
+int enableHandler();       // Enable button handler
+int encodeHandler();       // Encode button handler
 void num_LEDs(int number);  // Updates binary LEDs
 
 // Initializations
@@ -138,7 +138,7 @@ void loop()
                     num_LEDs(encode_press);
                     
                     // Send the data!
-                    Particle.publish("3GPPS-Electron", String(winner) + ':' + String(loser), PUBLIC);
+                    Particle.publish("3GPPS-Electron", String(winner) + String(loser), PUBLIC);
                     state = 2;
 
                      // Reset enable presses and winner/loser data
