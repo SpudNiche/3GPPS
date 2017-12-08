@@ -18,9 +18,7 @@
 
 			// Go through each win-loss pair and update the database
 			for ($i = 0; $i < sizeof($ids); $i += 2) {
-				if (!$db->updateBoard($ids[$i], $ids[$i + 1])) {
-					echo $db->lastErrormsg(); 
-				} 
+				$db->updateBoard($ids[$i], $ids[$i + 1]);
 			}
 		} 
 		else if ($_POST["wid"] && $_POST["lid"]) {

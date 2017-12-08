@@ -34,7 +34,7 @@
 		$ret = $db->dumpUsers(); 
 		while ($row = $ret->fetchArray(SQLITE3_ASSOC)) {
 				echo "<tr>"; 
-				echo "<td>" . $row["id"] . "</td>"; 
+				echo "<td>" . $row["user_id"] . "</td>"; 
 				echo "<td>" . $row["name"] . "</td>"; 
 				echo "<td>" . $row["win_count"] . "</td>"; 
 				echo "<td>" . $row["loss_count"] . "</td>"; 
